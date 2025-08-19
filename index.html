@@ -6,53 +6,77 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      color: #333;
       text-align: center;
       margin: 0;
       padding: 0;
+      background: #fafafa;
+      color: #333;
     }
     header {
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: bold;
+    }
+    h2 {
+      color: #e67300;
+      margin-top: 0.5rem;
+    }
+    .authors {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+    }
+    .authors a {
+      color: #0366d6;
+      text-decoration: none;
+    }
+    .affiliations {
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .badges {
+      margin-top: 1.5rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.6rem 1.2rem;
+      margin: 0.3rem;
+      border-radius: 30px;
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .badge:hover {
       background: #0366d6;
-      color: white;
-      padding: 2rem;
-    }
-    section {
-      padding: 2rem;
-    }
-    img {
-      max-width: 80%;
-      border-radius: 8px;
-      margin: 1rem 0;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    footer {
-      background: #222;
-      color: #aaa;
-      padding: 1rem;
-      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>My 3D Vision Project</h1>
-    <p>Exploring hand-object interaction generation</p>
+    <h1>DivideMotion: Dual-Stream Conditional Diffusion for Text-to-3D Hand–Object Interaction</h1>
+    <h2>3DV 2026 Workshop </h2>
+
+    <div class="authors">
+      <a href="#">Anonym</a><sup>1*</sup>, 
+      <a href="#">Anonym</a><sup>1*</sup>, 
+     
+    </div>
+
+    <div class="affiliations">
+      <sup>1</sup>Anonym, 
+      <sup>2</sup>Anonym
+     
+    </div>
+    <p><em>* indicates equal contribution</em></p>
+
+    <div class="badges">
+      <a href="#" class="badge">arXiv</a>
+      <a href="#" class="badge">Paper</a>
+      <a href="#" class="badge">Code</a>
+    </div>
   </header>
-
-  <section>
-    <h2>About the Project</h2>
-    <p>This project focuses on generating realistic 3D hand-object interactions from textual descriptions using diffusion-based models.</p>
-  </section>
-
-  <section>
-    <h2>Results</h2>
-    <p>Here are some qualitative results from our model:</p>
-    <img src="together.png" alt="3D Results">
-  </section>
-
-  <footer>
-    <p>Created with ❤️ using GitHub Pages</p>
-  </footer>
 </body>
 </html>
