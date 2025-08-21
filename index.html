@@ -1,82 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DivideMotion: Dual-Stream Conditional Diffusion for Text-to-3D Hand–Object Interaction</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      background: #fafafa;
-      color: #333;
+    :root{
+      --bg:#fafafa; --text:#333; --muted:#555; --accent:#e67300; --link:#0366d6;
+      --card-radius:16px; --shadow:0 6px 24px rgba(0,0,0,.08);
     }
-    header {
-      padding: 2rem;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      font-family: Arial, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", sans-serif;
+      margin:0; color:var(--text); background:var(--bg); text-align:center;
     }
-    h1 {
-      font-size: 2.2rem;
-      font-weight: bold;
+    header{padding:2.25rem 1rem 1.5rem}
+    h1{font-size:2.2rem; font-weight:800; margin:.25rem auto; max-width:60ch}
+    h2{color:var(--accent); margin:.5rem 0 0; font-weight:800}
+    .authors{margin-top:1rem; font-size:1.05rem}
+    .authors a{color:var(--link); text-decoration:none}
+    .affiliations{margin:.5rem 0; font-size:.95rem; color:var(--muted)}
+    .badges{margin-top:1.2rem}
+    .badge{display:inline-block; padding:.6rem 1.1rem; margin:.3rem; border-radius:30px; background:#333; color:#fff; text-decoration:none; font-weight:700}
+    .badge:hover{background:var(--link)}
+
+    
+    .section{padding:3rem 1rem; background:#fff; border-top:1px solid #eee}
+    .container{max-width:1000px; margin:0 auto; text-align:left}
+    .section > .container > h3{margin:0 0 .5rem; font-size:1.8rem; color:var(--accent)}
+    .section > .container > p.lead{margin:.25rem 0 1.25rem; color:var(--muted)}
+
+   
+    .slider-wrap{position:relative}
+    .slides{position:relative; min-height:0}
+    .card{display:none; background:#fff; border-radius:var(--card-radius); box-shadow:var(--shadow); overflow:hidden}
+    .card.active{display:block; animation:fade .28s ease-in-out}
+    .card figure{margin:0}
+    
+    .card figcaption{display:flex; align-items:center; justify-content:space-between; gap:.5rem; padding:.75rem 1rem}
+        
+    .card video{
+      display:block;
+      width:100%;
+      height:auto;                 
+      background:transparent;      
+      object-fit:contain;         
     }
-    h2 {
-      color: #e67300;
-      margin-top: 0.5rem;
+
+    .title{font-weight:700}
+    .tag{font-size:.75rem; padding:.2rem .55rem; border-radius:999px; background:#f1f1f1; color:#555; white-space:nowrap}
+
+    .nav{position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border:none; border-radius:50%;
+      background:rgba(51,51,51,.85); color:#fff; cursor:pointer; display:grid; place-items:center; box-shadow:var(--shadow)}
+    .nav:hover{background:var(--accent)}
+    .nav:focus-visible{outline:3px solid var(--accent)}
+    .nav.prev{left:-12px}
+    .nav.next{right:-12px}
+
+    .dots{display:flex; gap:.4rem; justify-content:center; margin-top:.8rem}
+    .dot{width:10px; height:10px; border-radius:50%; background:#ddd; border:none}
+    .dot[aria-current="true"]{background:#333}
+
+    
+    .grid4{display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem}
+    @media (max-width: 1024px){ .grid4{grid-template-columns:repeat(2, 1fr)} }
+    @media (max-width: 600px){ .grid4{grid-template-columns:1fr} }
+    .grid4 .card{display:block}
+
+    @media (max-width: 640px){
+      .nav{display:none}
+      .container{max-width:94%}
     }
-    .authors {
-      margin-top: 1rem;
-      font-size: 1.1rem;
-    }
-    .authors a {
-      color: #0366d6;
-      text-decoration: none;
-    }
-    .affiliations {
-      margin: 0.5rem 0;
-      font-size: 0.9rem;
-      color: #555;
-    }
-    .badges {
-      margin-top: 1.5rem;
-    }
-    .badge {
-      display: inline-block;
-      padding: 0.6rem 1.2rem;
-      margin: 0.3rem;
-      border-radius: 30px;
-      background: #333;
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .badge:hover {
-      background: #0366d6;
-    }
+
+    @keyframes fade{from{opacity:.5; transform:scale(.997)} to{opacity:1; transform:scale(1)}}
   </style>
 </head>
 <body>
   <header>
     <h1>DivideMotion: Dual-Stream Conditional Diffusion for Text-to-3D Hand–Object Interaction</h1>
-    <h2>3DV 2026 Workshop </h2>
+    <h2>3DV 2026 Workshop</h2>
 
     <div class="authors">
-      <a href="#">Anonym</a><sup>1*</sup>, 
-      <a href="#">Anonym</a><sup>1*</sup>, 
-     
+      <a href="#">Anonym</a><sup>1*</sup>,
+      <a href="#">Anonym</a><sup>1*</sup>
     </div>
 
     <div class="affiliations">
-      <sup>1</sup>Anonym, 
+      <sup>1</sup>Anonym,
       <sup>2</sup>Anonym
-     
     </div>
     <p><em>* indicates equal contribution</em></p>
 
     <div class="badges">
       <a href="#" class="badge">arXiv</a>
       <a href="#" class="badge">Paper</a>
-      <a href="#" class="badge">Code</a>
+      <a class="badge"
+     href="https://github.com/anonym3dv/HOI-generation"
+     target="_blank" rel="noopener noreferrer"
+     aria-label="View code on GitHub" title="View code on GitHub">
+    Code
+  </a>
     </div>
   </header>
+
+  
+  <section id="results" class="section" aria-label="Results">
+    <div class="container">
+      <h3>Results</h3>
+      <p class="lead">Only one video visible at a time. Use the arrows or the ←/→ keys.</p>
+
+      <div class="slider-wrap" tabindex="0" aria-label="Results video slideshow">
+        <button class="nav prev" aria-label="Previous" title="Previous" type="button">&#9664;</button>
+        <div class="slides" role="list" aria-live="polite" aria-label="Video list (1 visible)">
+          
+        </div>
+        <button class="nav next" aria-label="Next" title="Next" type="button">&#9654;</button>
+      </div>
+      <div class="dots" role="tablist" aria-label="Pagination"></div>
+    </div>
+  </section>
+
+  
+  <section id="diversity" class="section" aria-label="Diversity">
+    <div class="container">
+      <h3>Diversity</h3>
+      <p class="lead">Four side-by-side generations for the same prompt to showcase variability.</p>
+
+      <div class="grid4" role="list" aria-label="Four-up diversity grid">
+        
+      </div>
+    </div>
+  </section>
+
+  <script>
+    
+    const VIDEO_DATA = [
+      
+      { title: "Inspect Apple with both hands",         src: "Results/inspectApple2h_h264.mp4",  tag: "GRAB"   },
+      { title: "Drink Mug with two hands",              src: "Results/drinkMug2h_h264.mp4",      tag: "GRAB"   },
+      { title: "Open Laptop with right hand",           src: "Results/openLaptoprh_h264.mp4",    tag: "ARCTIC" },
+      { title: "Open Microwave with left hand",         src: "Results/openMicrowavelh_h264.mp4", tag: "ARCTIC" },
+      { title: "Tape laptop with two hands",            src: "Results/tape_laptop2h_h264.mp4",   tag: "ARCTIC" }
+    ];
+
+    const DIVERSITY_DATA = [
+      { title: "Variant #1 — open laptop with both hands", src: "Diversity/1_h264.mp4", tag: "Seed 1" },
+      { title: "Variant #2 — open laptop with both hands", src: "Diversity/2_h264.mp4", tag: "Seed 2" },
+      { title: "Variant #3 — open laptop with both hands", src: "Diversity/3r_h264.mp4", tag: "Seed 3" },
+      { title: "Variant #4 — open laptop with both hands", src: "Diversity/5_h264.mp4", tag: "Seed 4" }
+    ];
+
+    
+    function el(html){
+      const t = document.createElement('template');
+      t.innerHTML = html.trim();
+      return t.content.firstChild;
+    }
+
+    
+    const slides = document.querySelector('.slides');
+    const dots = document.querySelector('.dots');
+
+    VIDEO_DATA.forEach(({title, src, poster, tag}, i) => {
+      const card = el(`
+        <article class="card" role="listitem" aria-hidden="true">
+          <figure>
+            <!-- Slider videos: loop + muted; autoplay handled in JS on slide change -->
+            <video playsinline muted preload="metadata" loop poster="${poster || ''}" title="${title}">
+              <source src="${src}" type="video/mp4" />
+              Your browser does not support the <code>video</code> tag.
+            </video>
+            <figcaption>
+              <span class="title">${title}</span>
+              ${tag ? `<span class="tag">${tag}</span>` : ''}
+            </figcaption>
+          </figure>
+        </article>`);
+      slides.appendChild(card);
+
+      const dot = el(`<button class="dot" type="button" role="tab" aria-label="Go to: ${title}"></button>`);
+      dot.addEventListener('click', () => show(i));
+      dots.appendChild(dot);
+    });
+
+    const prevBtn = document.querySelector('.nav.prev');
+    const nextBtn = document.querySelector('.nav.next');
+
+    
+    const cards = () => Array.from(document.querySelectorAll('.slides .card'));
+    const videos = () => Array.from(document.querySelectorAll('.slides .card video'));
+
+    let current = 0;
+
+    function playActive(){
+      const v = cards()[current]?.querySelector('video');
+      if (!v) return;
+      
+      
+      v.play().catch(err => console.warn('Autoplay blocked:', err?.message));
+    }
+
+    function pauseAll(){
+      videos().forEach(v => v.pause());
+    }
+
+    function updateDots(){
+      dots.querySelectorAll('.dot').forEach((d, idx) => {
+        const sel = idx === current;
+        d.setAttribute('aria-current', sel ? 'true' : 'false');
+        d.setAttribute('aria-selected', sel ? 'true' : 'false');
+      });
+    }
+
+    function show(i){
+      const allCards = cards();
+      if(allCards.length === 0) return;
+
+      
+      const next = (i % allCards.length + allCards.length) % allCards.length;
+
+      
+      pauseAll();
+
+      allCards.forEach((c, idx) => {
+        const isActive = idx === next;
+        c.classList.toggle('active', isActive);
+        c.setAttribute('aria-hidden', String(!isActive));
+      });
+
+      current = next;
+      updateDots();
+      playActive(); 
+    }
+
+    
+    show(0);
+
+    
+    prevBtn.addEventListener('click', () => show(current - 1));
+    nextBtn.addEventListener('click', () => show(current + 1));
+
+    
+    const wrap = document.querySelector('.slider-wrap');
+    wrap.addEventListener('keydown', (e) => {
+      if(e.key === 'ArrowRight'){ nextBtn.click(); }
+      if(e.key === 'ArrowLeft'){  prevBtn.click(); }
+    });
+
+    
+    slides.addEventListener('click', (e) => {
+      const v = e.target.closest('video');
+      if(!v) return;
+      if(v.paused){ v.play(); } else { v.pause(); }
+    });
+
+    
+    videos().forEach(v => {
+      v.addEventListener('loadeddata', () => console.log('Loaded:', v.currentSrc));
+      v.addEventListener('error',      () => console.error('Load error:', v.currentSrc));
+    });
+
+  
+    const grid = document.querySelector('.grid4');
+    if(grid){
+      DIVERSITY_DATA.forEach(({title, src, poster, tag}) => {
+        const card = el(`
+          <article class="card" role="listitem">
+            <figure>
+              <!-- Diversity videos: autoplay + loop; controls kept for manual control -->
+              <video playsinline muted preload="metadata" autoplay loop controls poster="${poster || ''}" title="${title}">
+                <source src="${src}" type="video/mp4" />
+                Your browser does not support the <code>video</code> tag.
+              </video>
+              <figcaption>
+                <span class="title">${title}</span>
+                ${tag ? `<span class="tag">${tag}</span>` : ''}
+              </figcaption>
+            </figure>
+          </article>`);
+        grid.appendChild(card);
+      });
+
+      
+      const gridVideos = Array.from(document.querySelectorAll('.grid4 video'));
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(({isIntersecting, target: v}) => {
+          if (isIntersecting) { v.play().catch(()=>{}); } else { v.pause(); }
+        });
+      }, { threshold: 0.25 });
+
+      gridVideos.forEach(v => {
+        v.addEventListener('loadeddata', () => v.play().catch(()=>{}), { once: true });
+        io.observe(v);
+      });
+    }
+  </script>
 </body>
 </html>
