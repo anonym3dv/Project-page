@@ -25,27 +25,26 @@
     .badge{display:inline-block; padding:.6rem 1.1rem; margin:.3rem; border-radius:30px; background:#333; color:#fff; text-decoration:none; font-weight:700}
     .badge:hover{background:var(--link)}
 
-    
     .section{padding:3rem 1rem; background:#fff; border-top:1px solid #eee}
     .container{max-width:1000px; margin:0 auto; text-align:left}
     .section > .container > h3{margin:0 0 .5rem; font-size:1.8rem; color:var(--accent)}
     .section > .container > p.lead{margin:.25rem 0 1.25rem; color:var(--muted)}
 
-   
     .slider-wrap{position:relative}
     .slides{position:relative; min-height:0}
     .card{display:none; background:#fff; border-radius:var(--card-radius); box-shadow:var(--shadow); overflow:hidden}
     .card.active{display:block; animation:fade .28s ease-in-out}
     .card figure{margin:0}
-    
+
     .card figcaption{display:flex; align-items:center; justify-content:space-between; gap:.5rem; padding:.75rem 1rem}
-        
+
+    /* Vidéos : respectent leur ratio (pas de déformation) */
     .card video{
       display:block;
       width:100%;
-      height:auto;                 
-      background:transparent;      
-      object-fit:contain;         
+      height:auto;
+      background:transparent;
+      object-fit:contain; /* change en 'cover' si tu veux remplir sans bandes (recadrage) */
     }
 
     .title{font-weight:700}
@@ -62,7 +61,6 @@
     .dot{width:10px; height:10px; border-radius:50%; background:#ddd; border:none}
     .dot[aria-current="true"]{background:#333}
 
-    
     .grid4{display:grid; grid-template-columns:repeat(4, 1fr); gap:1rem}
     @media (max-width: 1024px){ .grid4{grid-template-columns:repeat(2, 1fr)} }
     @media (max-width: 600px){ .grid4{grid-template-columns:1fr} }
@@ -74,6 +72,17 @@
     }
 
     @keyframes fade{from{opacity:.5; transform:scale(.997)} to{opacity:1; transform:scale(1)}}
+
+    /* Footer */
+    footer{
+      padding:1rem;
+      background:#fff;
+      border-top:1px solid #eee;
+      color:var(--muted);
+      font-size:.9rem;
+      text-align:center;
+    }
+    footer .container{ max-width:1000px; margin:0 auto; }
   </style>
 </head>
 <body>
@@ -104,7 +113,7 @@
     </div>
   </header>
 
-  
+  <!-- ===== Results ===== -->
   <section id="results" class="section" aria-label="Results">
     <div class="container">
       <h3>Results</h3>
@@ -113,7 +122,7 @@
       <div class="slider-wrap" tabindex="0" aria-label="Results video slideshow">
         <button class="nav prev" aria-label="Previous" title="Previous" type="button">&#9664;</button>
         <div class="slides" role="list" aria-live="polite" aria-label="Video list (1 visible)">
-          
+          <!-- Cards injected by JS -->
         </div>
         <button class="nav next" aria-label="Next" title="Next" type="button">&#9654;</button>
       </div>
@@ -121,22 +130,24 @@
     </div>
   </section>
 
-  
+  <!-- ===== Diversity (4 examples side by side) ===== -->
   <section id="diversity" class="section" aria-label="Diversity">
     <div class="container">
       <h3>Diversity</h3>
       <p class="lead">Four side-by-side generations for the same prompt to showcase variability.</p>
 
       <div class="grid4" role="list" aria-label="Four-up diversity grid">
-        
+        <!-- Diversity cards injected by JS -->
       </div>
     </div>
   </section>
 
   <script>
-    
+    /* ================================
+       1) Configure your videos here
+       (Assure-toi que la casse des dossiers correspond: Results/ & Diversity/)
+    ==================================*/
     const VIDEO_DATA = [
-      
       { title: "Inspect Apple with both hands",         src: "Results/inspectApple2h_h264.mp4",  tag: "GRAB"   },
       { title: "Drink Mug with two hands",              src: "Results/drinkMug2h_h264.mp4",      tag: "GRAB"   },
       { title: "Open Laptop with right hand",           src: "Results/openLaptoprh_h264.mp4",    tag: "ARCTIC" },
@@ -145,20 +156,22 @@
     ];
 
     const DIVERSITY_DATA = [
-      { title: "Variant #1 — open laptop with both hands", src: "Diversity/1_h264.mp4", tag: "Seed 1" },
-      { title: "Variant #2 — open laptop with both hands", src: "Diversity/2_h264.mp4", tag: "Seed 2" },
+      { title: "Variant #1 — open laptop with both hands", src: "Diversity/1_h264.mp4",  tag: "Seed 1" },
+      { title: "Variant #2 — open laptop with both hands", src: "Diversity/2_h264.mp4",  tag: "Seed 2" },
       { title: "Variant #3 — open laptop with both hands", src: "Diversity/3r_h264.mp4", tag: "Seed 3" },
-      { title: "Variant #4 — open laptop with both hands", src: "Diversity/5_h264.mp4", tag: "Seed 4" }
+      { title: "Variant #4 — open laptop with both hands", src: "Diversity/5_h264.mp4",  tag: "Seed 4" }
     ];
 
-    
+    // Utility to create a DOM node from a string
     function el(html){
       const t = document.createElement('template');
       t.innerHTML = html.trim();
       return t.content.firstChild;
     }
 
-    
+    /* ================================
+       2) Generate slider cards + dots
+    ==================================*/
     const slides = document.querySelector('.slides');
     const dots = document.querySelector('.dots');
 
@@ -187,7 +200,7 @@
     const prevBtn = document.querySelector('.nav.prev');
     const nextBtn = document.querySelector('.nav.next');
 
-    
+    // Scope to the slider only
     const cards = () => Array.from(document.querySelectorAll('.slides .card'));
     const videos = () => Array.from(document.querySelectorAll('.slides .card video'));
 
@@ -196,8 +209,7 @@
     function playActive(){
       const v = cards()[current]?.querySelector('video');
       if (!v) return;
-      
-      
+      // v.currentTime = 0; // décommente si tu veux repartir de 0 à chaque slide
       v.play().catch(err => console.warn('Autoplay blocked:', err?.message));
     }
 
@@ -217,10 +229,9 @@
       const allCards = cards();
       if(allCards.length === 0) return;
 
-      
+      // normalize index
       const next = (i % allCards.length + allCards.length) % allCards.length;
 
-      
       pauseAll();
 
       allCards.forEach((c, idx) => {
@@ -231,37 +242,39 @@
 
       current = next;
       updateDots();
-      playActive(); 
+      playActive(); // autoplay active video
     }
 
-    
+    // init
     show(0);
 
-    
+    // Arrow controls
     prevBtn.addEventListener('click', () => show(current - 1));
     nextBtn.addEventListener('click', () => show(current + 1));
 
-    
+    // Keyboard when slider is focused
     const wrap = document.querySelector('.slider-wrap');
     wrap.addEventListener('keydown', (e) => {
       if(e.key === 'ArrowRight'){ nextBtn.click(); }
       if(e.key === 'ArrowLeft'){  prevBtn.click(); }
     });
 
-    
+    // Click-to-play/pause on the active video's element
     slides.addEventListener('click', (e) => {
       const v = e.target.closest('video');
       if(!v) return;
       if(v.paused){ v.play(); } else { v.pause(); }
     });
 
-    
+    // Debug logs (optional)
     videos().forEach(v => {
       v.addEventListener('loadeddata', () => console.log('Loaded:', v.currentSrc));
       v.addEventListener('error',      () => console.error('Load error:', v.currentSrc));
     });
 
-  
+    /* ================================
+       3) Render the Diversity grid
+    ==================================*/
     const grid = document.querySelector('.grid4');
     if(grid){
       DIVERSITY_DATA.forEach(({title, src, poster, tag}) => {
@@ -282,7 +295,7 @@
         grid.appendChild(card);
       });
 
-      
+      // Autoplay robustness for Diversity: play when visible, pause when not
       const gridVideos = Array.from(document.querySelectorAll('.grid4 video'));
       const io = new IntersectionObserver(entries => {
         entries.forEach(({isIntersecting, target: v}) => {
@@ -295,6 +308,18 @@
         io.observe(v);
       });
     }
+  </script>
+
+  <!-- ===== Footer ===== -->
+  <footer role="contentinfo">
+    <div class="container">
+      <p>© <span id="year"></span> Anonym. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Met à jour l’année du footer automatiquement
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
